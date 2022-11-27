@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
+from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
 from starlette import status
 from datetime import timedelta, datetime
@@ -62,6 +63,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def get_current_seller(token: str = Depends(oauth2_cheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail='인증되지 않은 사용자 입니다', headers={'WWW-Authenticate': "Bearer"})
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get('sub')
